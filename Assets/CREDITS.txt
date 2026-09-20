@@ -1,0 +1,12 @@
+Music_Intro- Music_Intro - Sound Effect by <a href="https://pixabay.com/users/raynocash-39688179/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=313604">RayNoCash</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=313604">Pixabay</a>
+
+Music_StartScene	
+Music_GhostNormal	
+Music_GhostScared	
+Music_GhostDead
+SFX_Move	
+SFX_EatPellet	
+SFX_EatGhost	
+SFX_EatCherry	
+SFX_WallBump	
+SFX_PacDeath
