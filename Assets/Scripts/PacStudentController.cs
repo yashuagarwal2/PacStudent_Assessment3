@@ -70,5 +70,6 @@ public class PacStudentController : MonoBehaviour
 
         tweener.AddTween(transform, start, end, duration);
         current = next;
-    }
+    }}
+    
 
