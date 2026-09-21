@@ -1,47 +1,163 @@
+using UnityEngine;
 #if UNITY_EDITOR
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditor.Animations;
-using UnityEngine;
+#endif
 
-// One-click setup: adds the Int parameter "Direction" to the selected object's
-// Animator Controller, and adds Any State transitions for states named
-// Up / Down / Left / Right (up = 0, down = 1, left = 2, right = 3).
-public static class AddDirectionParameter
+public class PacStudentController : MonoBehaviour
 {
-    private const string ParamName = "Direction";
+    private const string DirectionParam = "Direction";
 
-    [MenuItem("Tools/Set Up Direction Parameter (select PacStudent first)")]
-    private static void Run()
+    [SerializeField] private Tweener tweener;
+    [SerializeField] private Animator animator;
+    [SerializeField] private float speed = 4f;   // tiles per second
+
+    // Clockwise loop around the block (world units)
+    private Vector3[] waypoints = new Vector3[]
     {
-        if (EditorApplication.isPlaying)
+        new Vector3(1f, -1f, 0f),
+        new Vector3(6f, -1f, 0f),
+        new Vector3(6f, -5f, 0f),
+        new Vector3(1f, -5f, 0f)
+    };
+
+    private int currentIndex;
+    private bool canSetDirection;   // true only if the Animator has an Int parameter called "Direction"
+
+    void Awake()
+    {
+        // Fill any empty Inspector slots automatically so the script always runs
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+            if (animator == null)
+            {
+                animator = GetComponentInChildren<Animator>();
+            }
+        }
+
+        if (tweener == null)
+        {
+#if UNITY_2023_1_OR_NEWER
+            tweener = FindFirstObjectByType<Tweener>();
+#else
+            tweener = FindObjectOfType<Tweener>();
+#endif
+        }
+
+        if (tweener == null)
+        {
+            Debug.LogWarning("No Tweener found in the scene, adding one to PacStudent.", this);
+            tweener = gameObject.AddComponent<Tweener>();
+        }
+
+        CheckDirectionParameter();
+    }
+
+    void Start()
+    {
+        // Put PacStudent on the first waypoint, then start the first leg
+        currentIndex = 0;
+        transform.position = waypoints[currentIndex];
+        StartNextLeg();
+    }
+
+    void Update()
+    {
+        // If PacStudent isn't tweening right now, the last leg has finished
+        if (!tweener.TweenExists(transform))
+        {
+            StartNextLeg();
+        }
+    }
+
+    // Looks once for the "Direction" Int parameter so we never call SetInteger on a missing one
+    private void CheckDirectionParameter()
+    {
+        canSetDirection = false;
+
+        if (animator == null || animator.runtimeAnimatorController == null)
+        {
+            Debug.LogWarning("PacStudent has no Animator Controller assigned. Movement will still work.", this);
+            return;
+        }
+
+        foreach (AnimatorControllerParameter p in animator.parameters)
+        {
+            if (p.name == DirectionParam && p.type == AnimatorControllerParameterType.Int)
+            {
+                canSetDirection = true;
+                break;
+            }
+        }
+
+        if (!canSetDirection)
+        {
+            Debug.LogWarning("The Animator has no Int parameter named 'Direction'. Movement will still work, but the animation won't change direction. " +
+                             "Fix: click the ⋮ menu on this component and choose 'Set Up Direction Parameter'.", this);
+        }
+    }
+
+    private void StartNextLeg()
+    {
+        // Start = current waypoint, end = next waypoint (% wraps back to 0 at the end)
+        int nextIndex = (currentIndex + 1) % waypoints.Length;
+        Vector3 start = waypoints[currentIndex];
+        Vector3 end = waypoints[nextIndex];
+
+        // Distance / speed keeps the speed the same on every leg
+        float duration = Vector3.Distance(start, end) / Mathf.Max(speed, 0.01f);
+
+        // Work out which way this leg is heading:
+        // up = 0, down = 1, left = 2, right = 3
+        float dx = end.x - start.x;
+        float dy = end.y - start.y;
+        int direction;
+
+        if (Mathf.Abs(dx) > Mathf.Abs(dy))
+        {
+            direction = dx > 0 ? 3 : 2;   // right : left
+        }
+        else
+        {
+            direction = dy > 0 ? 0 : 1;   // up : down
+        }
+
+        // Set the animation direction at the moment the leg begins so turning is instant
+        if (canSetDirection)
+        {
+            animator.SetInteger(DirectionParam, direction);
+        }
+
+        tweener.AddTween(transform, start, end, duration);
+
+        currentIndex = nextIndex;
+    }
+
+#if UNITY_EDITOR
+    // One-click setup (Editor only): click the ⋮ menu on this component in the Inspector and choose
+    // "Set Up Direction Parameter". Adds the Int parameter "Direction" to the Animator Controller and
+    // adds Any State transitions for states named Up / Down / Left / Right (0 / 1 / 2 / 3).
+    [ContextMenu("Set Up Direction Parameter")]
+    private void SetUpDirectionParameter()
+    {
+        if (Application.isPlaying)
         {
             EditorUtility.DisplayDialog("Stop Play mode", "Stop Play mode first, then run this again.", "OK");
             return;
         }
 
-        GameObject go = Selection.activeGameObject;
-        if (go == null)
-        {
-            EditorUtility.DisplayDialog("Nothing selected", "Click PacStudent in the Hierarchy first, then run this again.", "OK");
-            return;
-        }
-
-        Animator animator = go.GetComponent<Animator>();
-        if (animator == null)
-        {
-            animator = go.GetComponentInChildren<Animator>();
-        }
-
-        if (animator == null || animator.runtimeAnimatorController == null)
+        Animator a = animator != null ? animator : GetComponentInChildren<Animator>();
+        if (a == null || a.runtimeAnimatorController == null)
         {
             EditorUtility.DisplayDialog("No Animator Controller",
-                "The selected object has no Animator with a Controller assigned.\nAssign one in the Animator component first.", "OK");
+                "PacStudent has no Animator with a Controller assigned.\nAssign one in the Animator component first.", "OK");
             return;
         }
 
         // Handle an Animator Override Controller by using the controller it is based on
-        RuntimeAnimatorController rc = animator.runtimeAnimatorController;
+        RuntimeAnimatorController rc = a.runtimeAnimatorController;
         AnimatorOverrideController overrideController = rc as AnimatorOverrideController;
         if (overrideController != null)
         {
@@ -59,7 +175,7 @@ public static class AddDirectionParameter
         bool hasParam = false;
         foreach (AnimatorControllerParameter p in controller.parameters)
         {
-            if (p.name == ParamName)
+            if (p.name == DirectionParam)
             {
                 if (p.type == AnimatorControllerParameterType.Int)
                 {
@@ -76,7 +192,7 @@ public static class AddDirectionParameter
 
         if (!hasParam)
         {
-            controller.AddParameter(ParamName, AnimatorControllerParameterType.Int);
+            controller.AddParameter(DirectionParam, AnimatorControllerParameterType.Int);
         }
 
         // 2. Add Any State transitions for states named Up / Down / Left / Right
@@ -94,7 +210,7 @@ public static class AddDirectionParameter
             }
 
             AnimatorStateTransition t = sm.AddAnyStateTransition(state);
-            t.AddCondition(AnimatorConditionMode.Equals, value, ParamName);
+            t.AddCondition(AnimatorConditionMode.Equals, value, DirectionParam);
             t.hasExitTime = false;          // turn instantly
             t.duration = 0f;
             t.canTransitionToSelf = false;  // don't restart the animation every leg
@@ -109,7 +225,7 @@ public static class AddDirectionParameter
         string message = "Parameter 'Direction' is ready.\nDirection transitions added: " + wired;
         if (wired == 0)
         {
-            message += "\n\nNo new transitions were needed or no states are named Up/Down/Left/Right. " +
+            message += "\n\nNo new transitions were needed, or no states are named Up/Down/Left/Right. " +
                        "If your walk states have other names, add the transitions by hand in the Animator window.";
         }
 
@@ -143,7 +259,7 @@ public static class AddDirectionParameter
 
             foreach (AnimatorCondition c in t.conditions)
             {
-                if (c.parameter == ParamName)
+                if (c.parameter == DirectionParam)
                 {
                     return true;
                 }
@@ -151,5 +267,5 @@ public static class AddDirectionParameter
         }
         return false;
     }
-}
 #endif
+}
