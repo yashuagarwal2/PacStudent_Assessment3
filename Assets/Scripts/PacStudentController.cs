@@ -21,7 +21,7 @@ public class PacStudentController : MonoBehaviour
         
         if (tweener == null)
         {
-            tweener = FindObjectOfType<Tweener>();
+            tweener = FindAnyObjectByType<Tweener>();
         }
 
    
