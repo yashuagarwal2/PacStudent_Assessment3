@@ -3,14 +3,14 @@ using System.Collections;
 
 public class MusicManager : MonoBehaviour
 {
-    [SerializeField] private AudioSource source;
-    [SerializeField] private AudioClip introClip;
-    [SerializeField] private AudioClip normalClip;
-    [SerializeField] private AudioClip scaredClip;
-    [SerializeField] private AudioClip deadClip;
-    [SerializeField] private AudioClip startSceneClip;
+    public AudioSource source;
+    public AudioClip introClip;
+    public AudioClip normalClip;
+    public AudioClip scaredClip;
+    public AudioClip deadClip;
+    public AudioClip startSceneClip;
 
-    private Coroutine introRoutine;
+    Coroutine introRoutine;
 
     void Start()
     {
@@ -18,42 +18,56 @@ public class MusicManager : MonoBehaviour
         source.loop = false;
         source.Play();
 
-        introRoutine = StartCoroutine(SwitchToNormalMusic());
+        introRoutine = StartCoroutine(PlayNormalAfterIntro());
     }
 
-    private IEnumerator SwitchToNormalMusic()
+    IEnumerator PlayNormalAfterIntro()
     {
-        // Wait for the shorter of the intro length and 3 seconds
-        float waitTime = Mathf.Min(introClip.length, 3f);
-        yield return new WaitForSeconds(waitTime);
+        
+        float wait = Mathf.Min(introClip.length, 3f);
+        yield return new WaitForSeconds(wait);
 
-        introRoutine = null;
         PlayLoop(normalClip);
     }
 
-    // ---- Public methods other scripts can call ----
-
-    public void PlayNormal()     => SwitchTo(normalClip);
-    public void PlayScared()     => SwitchTo(scaredClip);
-    public void PlayDead()       => SwitchTo(deadClip);
-    public void PlayStartScene() => SwitchTo(startSceneClip);
-
-    private void SwitchTo(AudioClip clip)
+    public void PlayNormal()
     {
-        // If the intro is still waiting to hand over to normal music, cancel it
+        SwitchTo(normalClip);
+    }
+
+    public void PlayScared()
+    {
+        SwitchTo(scaredClip);
+    }
+
+    public void PlayDead()
+    {
+        SwitchTo(deadClip);
+    }
+
+    public void PlayStartScene()
+    {
+        SwitchTo(startSceneClip);
+    }
+
+    void SwitchTo(AudioClip clip)
+    {
+        // stop the intro timer so it doesn't override this music later
         if (introRoutine != null)
         {
             StopCoroutine(introRoutine);
-            introRoutine = null;
         }
 
-        // Don't restart a track that's already playing
-        if (source.clip == clip && source.isPlaying) return;
+        
+        if (source.clip == clip && source.isPlaying)
+        {
+            return;
+        }
 
         PlayLoop(clip);
     }
 
-    private void PlayLoop(AudioClip clip)
+    void PlayLoop(AudioClip clip)
     {
         source.clip = clip;
         source.loop = true;
