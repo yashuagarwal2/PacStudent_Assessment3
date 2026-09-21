@@ -134,9 +134,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 708f826d000970990800000000000000
+      spriteID: f343129e6ccee4f83a1126b0e561065a
       internalID: -7419803527802193913
       vertices: []
       indices: 
@@ -156,9 +156,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 4f3870397453f5ae0800000000000000
+      spriteID: b19577f7592ca4fe2ae2cae910355f17
       internalID: -1558468364521208844
       vertices: []
       indices: 
@@ -178,9 +178,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 8f8b1d48a24e79230800000000000000
+      spriteID: 67ca11233c19f4a2c95109cfdf2ecf1d
       internalID: 3645633294647802104
       vertices: []
       indices: 
@@ -200,9 +200,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 4c493d3a2ed416e80800000000000000
+      spriteID: e83525254fd4a4769ade5ca6e614726c
       internalID: -8187177011776351036
       vertices: []
       indices: 
@@ -222,9 +222,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 538e933f6393f9690800000000000000
+      spriteID: c0b04db7e0be54818bd62558c3aadea2
       internalID: -7593287538551691211
       vertices: []
       indices: 
@@ -244,9 +244,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 62e16d1fe9f634240800000000000000
+      spriteID: 24e279ee1382b4d4e8c70dae4df489e1
       internalID: 4774782758395715110
       vertices: []
       indices: 
@@ -266,9 +266,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 2694b21df478f33e0800000000000000
+      spriteID: 7c6383605f42c4ce59f20c242886fa84
       internalID: -2071788526685697694
       vertices: []
       indices: 
@@ -288,9 +288,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 9fed15f6668f38bb0800000000000000
+      spriteID: 72bb9a6c226f64cc392585caffe2f1fc
       internalID: -4934827647829942535
       vertices: []
       indices: 
@@ -311,6 +311,8 @@ TextureImporter:
       entries:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":32.0,"y":32.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+      - key: SpriteEditor.SliceOnImport
+        value: False
     nameFileIdTable:
       Ghost_Blue_0: -7419803527802193913
       Ghost_Blue_1: -1558468364521208844
