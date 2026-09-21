@@ -40,26 +40,25 @@ public class Tweener : MonoBehaviour
 
     void Update()
     {
-        // Loop backwards so RemoveAt doesn't skip or shift items we haven't visited yet
+        
         for (int i = activeTweens.Count - 1; i >= 0; i--)
         {
             Tween tween = activeTweens[i];
 
-            // Progress from 0 (just started) to 1 (finished).
-            // If duration is 0 or less, treat the tween as instantly finished.
+            
             float t = tween.Duration > 0f
                 ? (Time.time - tween.StartTime) / tween.Duration
                 : 1f;
 
             if (t >= 1f)
             {
-                // Done: snap to the exact end position and remove the tween
+               
                 tween.Target.position = tween.EndPos;
                 activeTweens.RemoveAt(i);
             }
             else
             {
-                // Still going: move part-way between start and end
+                
                 tween.Target.position = tween.StartPos + (tween.EndPos - tween.StartPos) * t;
             }
         }

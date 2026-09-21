@@ -1,9 +1,9 @@
 using UnityEngine;
-#if UNITY_EDITOR
+
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditor.Animations;
-#endif
+
 
 public class PacStudentController : MonoBehaviour
 {
@@ -11,9 +11,9 @@ public class PacStudentController : MonoBehaviour
 
     [SerializeField] private Tweener tweener;
     [SerializeField] private Animator animator;
-    [SerializeField] private float speed = 4f;   // tiles per second
+    [SerializeField] private float speed = 4f;   
 
-    // Clockwise loop around the block (world units)
+    
     private Vector3[] waypoints = new Vector3[]
     {
         new Vector3(1f, -1f, 0f),
@@ -23,11 +23,11 @@ public class PacStudentController : MonoBehaviour
     };
 
     private int currentIndex;
-    private bool canSetDirection;   // true only if the Animator has an Int parameter called "Direction"
+    private bool canSetDirection;   
 
     void Awake()
     {
-        // Fill any empty Inspector slots automatically so the script always runs
+        
         if (animator == null)
         {
             animator = GetComponent<Animator>();
@@ -57,7 +57,7 @@ public class PacStudentController : MonoBehaviour
 
     void Start()
     {
-        // Put PacStudent on the first waypoint, then start the first leg
+        
         currentIndex = 0;
         transform.position = waypoints[currentIndex];
         StartNextLeg();
@@ -65,14 +65,14 @@ public class PacStudentController : MonoBehaviour
 
     void Update()
     {
-        // If PacStudent isn't tweening right now, the last leg has finished
+        
         if (!tweener.TweenExists(transform))
         {
             StartNextLeg();
         }
     }
 
-    // Looks once for the "Direction" Int parameter so we never call SetInteger on a missing one
+
     private void CheckDirectionParameter()
     {
         canSetDirection = false;
@@ -101,16 +101,15 @@ public class PacStudentController : MonoBehaviour
 
     private void StartNextLeg()
     {
-        // Start = current waypoint, end = next waypoint (% wraps back to 0 at the end)
+       
         int nextIndex = (currentIndex + 1) % waypoints.Length;
         Vector3 start = waypoints[currentIndex];
         Vector3 end = waypoints[nextIndex];
 
-        // Distance / speed keeps the speed the same on every leg
+        
         float duration = Vector3.Distance(start, end) / Mathf.Max(speed, 0.01f);
 
-        // Work out which way this leg is heading:
-        // up = 0, down = 1, left = 2, right = 3
+       
         float dx = end.x - start.x;
         float dy = end.y - start.y;
         int direction;
@@ -124,7 +123,7 @@ public class PacStudentController : MonoBehaviour
             direction = dy > 0 ? 0 : 1;   // up : down
         }
 
-        // Set the animation direction at the moment the leg begins so turning is instant
+        
         if (canSetDirection)
         {
             animator.SetInteger(DirectionParam, direction);
@@ -136,9 +135,7 @@ public class PacStudentController : MonoBehaviour
     }
 
 #if UNITY_EDITOR
-    // One-click setup (Editor only): click the ⋮ menu on this component in the Inspector and choose
-    // "Set Up Direction Parameter". Adds the Int parameter "Direction" to the Animator Controller and
-    // adds Any State transitions for states named Up / Down / Left / Right (0 / 1 / 2 / 3).
+ 
     [ContextMenu("Set Up Direction Parameter")]
     private void SetUpDirectionParameter()
     {
@@ -156,7 +153,7 @@ public class PacStudentController : MonoBehaviour
             return;
         }
 
-        // Handle an Animator Override Controller by using the controller it is based on
+       
         RuntimeAnimatorController rc = a.runtimeAnimatorController;
         AnimatorOverrideController overrideController = rc as AnimatorOverrideController;
         if (overrideController != null)
