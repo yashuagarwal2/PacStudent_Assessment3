@@ -32,7 +32,7 @@ public class LevelGenerator : MonoBehaviour
         {0,0,0,0,0,0,5,0,0,0,4,0,0,0}
     };
 
-    int[,] fullMap;
+    public int[,] fullMap;
     bool[,] isVertical;
     int fullRows;
     int fullCols;
@@ -216,4 +216,11 @@ public class LevelGenerator : MonoBehaviour
         float sizeForWidth = fullCols / 2f / cam.aspect;
         cam.orthographicSize = Mathf.Max(sizeForHeight, sizeForWidth) + 3f;
     }
+    public bool IsWalkable(int row, int col)
+    {
+        if (!InMap(row, col)) return false;
+        int v = fullMap[row, col];
+        return v == 0 || v == 5 || v == 6;
+    }
+
 }
