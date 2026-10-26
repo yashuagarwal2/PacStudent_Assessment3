@@ -33,13 +33,21 @@ public class Tweener : MonoBehaviour
     {
         for (int i = tweens.Count - 1; i >= 0; i--)
         {
+            if (tweens[i].target == null)
+            {
+                tweens.RemoveAt(i);
+                continue;
+            }
+
             Tween tween = tweens[i];
             float t = tween.duration > 0 ? (Time.time - tween.startTime) / tween.duration : 1f;
 
             tween.target.position = Vector3.Lerp(tween.start, tween.end, t);
 
             if (t >= 1f)
+            {
                 tweens.RemoveAt(i);
+            }
         }
     }
 }
