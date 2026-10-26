@@ -11,4 +11,9 @@ public class StartSceneManager : MonoBehaviour
     public void LoadLevel2()
     {
     }
+
+    public void LoadStart()
+    {
+        SceneManager.LoadScene("StartScene");
+    }
 }

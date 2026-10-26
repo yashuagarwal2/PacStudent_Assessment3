@@ -214,6 +214,6 @@ public class LevelGenerator : MonoBehaviour
 
         float sizeForHeight = fullRows / 2f;
         float sizeForWidth = fullCols / 2f / cam.aspect;
-        cam.orthographicSize = Mathf.Max(sizeForHeight, sizeForWidth) + 1f;
+        cam.orthographicSize = Mathf.Max(sizeForHeight, sizeForWidth) + 3f;
     }
 }
