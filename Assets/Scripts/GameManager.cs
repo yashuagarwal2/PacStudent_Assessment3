@@ -310,7 +310,7 @@ public class GameManager : MonoBehaviour
 
         blocker.SetActive(true);
         gameOverText.gameObject.SetActive(true);
-        exitButton.interactable = false;
+                if (exitButton != null) exitButton.interactable = false;
 
         int bestScore = PlayerPrefs.GetInt("L1Score", 0);
         float bestTime = PlayerPrefs.GetFloat("L1Time", 0f);

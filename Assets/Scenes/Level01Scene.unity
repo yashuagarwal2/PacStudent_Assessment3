@@ -42908,7 +42908,7 @@ MonoBehaviour:
   - {fileID: 55014627}
   - {fileID: 1843326139}
   - {fileID: 2032775137}
-  exitButton: {fileID: 0}
+  exitButton: {fileID: 111818883}
   pac: {fileID: 1363940287}
   ghostAnimators:
   - {fileID: 2121518924}
