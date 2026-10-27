@@ -875,6 +875,7 @@ GameObject:
   - component: {fileID: 53146348}
   - component: {fileID: 53146347}
   - component: {fileID: 53146349}
+  - component: {fileID: 53146350}
   m_Layer: 0
   m_Name: Ghost_Pink
   m_TagString: Ghost
@@ -1015,6 +1016,24 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.3
+--- !u!114 &53146350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53146345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c000b25e997e4fc99a2c0187d9921f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GhostController
+  ghostNumber: 3
+  tweener: {fileID: 435378838}
+  level: {fileID: 225005399}
+  gm: {fileID: 1558531231}
+  pac: {fileID: 1363940282}
+  pacSpeed: 5
 --- !u!1001 &53229103
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23028,6 +23047,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fca2e16168cc4afe8a7add9fa2199a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StartSceneManager
+  l1Score: {fileID: 0}
+  l1Time: {fileID: 0}
 --- !u!4 &655539696
 Transform:
   m_ObjectHideFlags: 0
@@ -26657,6 +26678,7 @@ GameObject:
   - component: {fileID: 826855548}
   - component: {fileID: 826855547}
   - component: {fileID: 826855549}
+  - component: {fileID: 826855550}
   m_Layer: 0
   m_Name: Ghost_Blue
   m_TagString: Ghost
@@ -26797,6 +26819,24 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.3
+--- !u!114 &826855550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 826855545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c000b25e997e4fc99a2c0187d9921f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GhostController
+  ghostNumber: 2
+  tweener: {fileID: 435378838}
+  level: {fileID: 225005399}
+  gm: {fileID: 1558531231}
+  pac: {fileID: 1363940282}
+  pacSpeed: 5
 --- !u!1001 &833074818
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -37448,6 +37488,7 @@ GameObject:
   - component: {fileID: 1376756721}
   - component: {fileID: 1376756720}
   - component: {fileID: 1376756722}
+  - component: {fileID: 1376756723}
   m_Layer: 0
   m_Name: Ghost_Orange
   m_TagString: Ghost
@@ -37588,6 +37629,24 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.3
+--- !u!114 &1376756723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1376756718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c000b25e997e4fc99a2c0187d9921f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GhostController
+  ghostNumber: 4
+  tweener: {fileID: 435378838}
+  level: {fileID: 225005399}
+  gm: {fileID: 1558531231}
+  pac: {fileID: 1363940282}
+  pacSpeed: 5
 --- !u!1001 &1377814443
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -60543,6 +60602,7 @@ GameObject:
   - component: {fileID: 2121518925}
   - component: {fileID: 2121518924}
   - component: {fileID: 2121518926}
+  - component: {fileID: 2121518927}
   m_Layer: 0
   m_Name: Ghost_Red
   m_TagString: Ghost
@@ -60683,6 +60743,24 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.3
+--- !u!114 &2121518927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2121518922}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c000b25e997e4fc99a2c0187d9921f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GhostController
+  ghostNumber: 1
+  tweener: {fileID: 435378838}
+  level: {fileID: 225005399}
+  gm: {fileID: 1558531231}
+  pac: {fileID: 358307320}
+  pacSpeed: 5
 --- !u!1001 &2125155605
 PrefabInstance:
   m_ObjectHideFlags: 0

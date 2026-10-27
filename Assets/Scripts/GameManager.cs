@@ -221,16 +221,13 @@ public class GameManager : MonoBehaviour
         AddScore(300);
         sfx.PlayOneShot(ghostEatClip);
         music.PlayDead();
-        StartCoroutine(ReviveGhost(i));
     }
 
-    IEnumerator ReviveGhost(int i)
+    public void GhostReachedHome(int i)
     {
-        yield return new WaitForSeconds(3f);
-
         if (ghostStates[i] != DEAD)
         {
-            yield break;
+            return;
         }
 
         SetGhostState(i, GlobalState());
@@ -281,7 +278,17 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < 4; i++)
         {
-            ghostAnimators[i].transform.position = ghostStarts[i];
+            GhostController ghost = ghostAnimators[i].GetComponent<GhostController>();
+
+            if (ghost != null)
+            {
+                ghost.ResetGhost();
+            }
+            else
+            {
+                ghostAnimators[i].transform.position = ghostStarts[i];
+            }
+
             SetGhostState(i, NORMAL);
         }
 
