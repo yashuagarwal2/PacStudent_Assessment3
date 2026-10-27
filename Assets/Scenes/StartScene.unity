@@ -246,6 +246,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fca2e16168cc4afe8a7add9fa2199a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StartSceneManager
+  l1Score: {fileID: 637162418}
+  l1Time: {fileID: 2041858916}
 --- !u!4 &37991071
 Transform:
   m_ObjectHideFlags: 0

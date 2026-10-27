@@ -28,6 +28,10 @@ public class Tweener : MonoBehaviour
     {
         return tweens.Exists(t => t.target == target);
     }
+    public void RemoveTween(Transform target)
+    {
+        tweens.RemoveAll(t => t.target == target);
+    }
 
     void Update()
     {

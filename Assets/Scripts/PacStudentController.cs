@@ -2,101 +2,169 @@ using UnityEngine;
 
 public class PacStudentController : MonoBehaviour
 {
-    // ----- Things you drag in from the Inspector -----
     public Tweener tweener;
     public Animator animator;
     public LevelGenerator level;
     public AudioSource audioSource;
-    public AudioClip moveClip;
-    public AudioClip eatClip;
+    public AudioClip moveClip, eatClip;
     public ParticleSystem dust;
     public float speed = 5f;
 
-    // ----- Directions stored as simple numbers -----
-    // x: -1 = left, 1 = right
-    // y:  1 = up,  -1 = down
-    // 0,0 means "no direction"
-    int lastX = 0, lastY = 0;       // the key the player pressed last
-    int currentX = 0, currentY = 0; // the way PacStudent is moving now
+    public GameManager gm;
+    public AudioClip cherryClip;
+    public AudioClip wallClip;
+    public ParticleSystem wallBump;
+    public AudioClip deathClip;
+    public ParticleSystem deathParticles;
+
+    Vector2Int lastInput = Vector2Int.zero;
+    Vector2Int currentInput = Vector2Int.zero;
+    bool isMoving = false;
+    Vector3 startPos;
 
     void Start()
     {
-        animator.SetInteger("Direction", 3); // face right at the start
+        startPos = transform.position;
+        animator.SetInteger("Direction", 3);
         StopMoving();
     }
 
     void Update()
     {
-        // 1. Remember the last key pressed
-        if (Input.GetKeyDown(KeyCode.W)) { lastX = 0;  lastY = 1;  }
-        if (Input.GetKeyDown(KeyCode.S)) { lastX = 0;  lastY = -1; }
-        if (Input.GetKeyDown(KeyCode.A)) { lastX = -1; lastY = 0;  }
-        if (Input.GetKeyDown(KeyCode.D)) { lastX = 1;  lastY = 0;  }
+        if (!gm.gameRunning) return;
 
-        // 2. If still sliding to the next tile, wait
-        if (tweener.TweenExists(transform))
-            return;
+        if (Input.GetKeyDown(KeyCode.W)) lastInput = Vector2Int.up;
+        if (Input.GetKeyDown(KeyCode.A)) lastInput = Vector2Int.left;
+        if (Input.GetKeyDown(KeyCode.S)) lastInput = Vector2Int.down;
+        if (Input.GetKeyDown(KeyCode.D)) lastInput = Vector2Int.right;
 
-        // 3. Try the new key first, otherwise keep going the same way
-        if (TryMove(lastX, lastY))
+        if (!tweener.TweenExists(transform))
         {
-            currentX = lastX;
-            currentY = lastY;
-        }
-        else if (!TryMove(currentX, currentY))
-        {
-            StopMoving(); // hit a wall
+            if (TryMove(lastInput))
+            {
+                currentInput = lastInput;
+            }
+            else if (!TryMove(currentInput))
+            {
+                bool wasMoving = isMoving;
+                StopMoving();
+                if (wasMoving) WallBump(currentInput);
+            }
         }
     }
 
-    // Tries to move one tile. Returns true if it worked.
-    bool TryMove(int dx, int dy)
+    bool TryMove(Vector2Int dir)
     {
-        if (dx == 0 && dy == 0)
-            return false;
+        if (dir == Vector2Int.zero) return false;
 
-        // Where am I on the grid?
         int col = Mathf.RoundToInt(transform.position.x);
         int row = Mathf.RoundToInt(-transform.position.y);
+        int targetCol = col + dir.x;
+        int targetRow = row - dir.y;
 
-        // Where do I want to go?
-        int newCol = col + dx;
-        int newRow = row - dy;
+        int maxCol = level.fullMap.GetLength(1) - 1;
+        if (targetCol < 0 || targetCol > maxCol)
+        {
+            int newCol = targetCol < 0 ? maxCol : 0;
+            transform.position = new Vector3(newCol, -row, 0f);
+            targetCol = newCol + dir.x;
+        }
 
-        // Is there a wall?
-        if (!level.IsWalkable(newRow, newCol))
-            return false;
+        if (!level.IsWalkable(targetRow, targetCol)) return false;
 
-        // Move there smoothly
-        Vector3 target = new Vector3(newCol, -newRow, 0);
-        tweener.AddTween(transform, transform.position, target, 1f / speed);
+        Vector3 end = new Vector3(targetCol, -targetRow, 0f);
+        tweener.AddTween(transform, transform.position, end, 1f / speed);
 
-        // Play the right animation
-        animator.speed = 1;
-        if (dy == 1)       animator.SetInteger("Direction", 0); // up
-        else if (dy == -1) animator.SetInteger("Direction", 1); // down
-        else if (dx == -1) animator.SetInteger("Direction", 2); // left
-        else               animator.SetInteger("Direction", 3); // right
+        animator.speed = 1f;
+        animator.SetInteger("Direction", DirectionIndex(dir));
 
-        // Eating sound if there is a pellet (5 or 6), else walking sound
-        int tile = level.fullMap[newRow, newCol];
-        if (tile == 5 || tile == 6)
-            audioSource.clip = eatClip;
-        else
-            audioSource.clip = moveClip;
+        int tile = level.fullMap[targetRow, targetCol];
+        audioSource.clip = (tile == 5 || tile == 6) ? eatClip : moveClip;
         audioSource.Play();
 
-        // Dust effect
-        if (!dust.isPlaying)
-            dust.Play();
-
+        if (!dust.isPlaying) dust.Play();
+        isMoving = true;
         return true;
+    }
+
+    int DirectionIndex(Vector2Int dir)
+    {
+        if (dir == Vector2Int.up) return 0;
+        if (dir == Vector2Int.down) return 1;
+        if (dir == Vector2Int.left) return 2;
+        return 3;
     }
 
     void StopMoving()
     {
-        animator.speed = 0; // freeze animation
-        audioSource.Stop();
-        dust.Stop();
+        isMoving = false;
+        animator.speed = 0f;
+        if (audioSource.isPlaying) audioSource.Stop();
+        if (dust.isPlaying) dust.Stop();
+    }
+
+    void WallBump(Vector2Int dir)
+    {
+        audioSource.PlayOneShot(wallClip);
+        wallBump.transform.position = transform.position + new Vector3(dir.x, dir.y, 0f) * 0.5f;
+        wallBump.Play();
+    }
+
+    public void Die()
+    {
+        tweener.RemoveTween(transform);
+        StopMoving();
+        animator.speed = 1f;
+        animator.SetInteger("Direction", 4);
+        audioSource.PlayOneShot(deathClip);
+        deathParticles.Play();
+    }
+
+    public void ResetToStart()
+    {
+        tweener.RemoveTween(transform);
+        transform.position = startPos;
+        lastInput = Vector2Int.zero;
+        currentInput = Vector2Int.zero;
+        animator.SetInteger("Direction", 3);
+        StopMoving();
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (!gm.gameRunning) return;
+
+        int c = Mathf.RoundToInt(other.transform.position.x);
+        int r = Mathf.RoundToInt(-other.transform.position.y);
+
+        if (other.CompareTag("Pellet"))
+        {
+            gm.AddScore(10);
+            level.fullMap[r, c] = 0;
+            Destroy(other.gameObject);
+            gm.PelletEaten();
+        }
+        else if (other.CompareTag("PowerPellet"))
+        {
+            gm.AddScore(50);
+            level.fullMap[r, c] = 0;
+            Destroy(other.gameObject);
+            gm.StartScared();
+            gm.PelletEaten();
+        }
+        else if (other.CompareTag("Cherry"))
+        {
+            gm.AddScore(100);
+            audioSource.PlayOneShot(cherryClip);
+            Destroy(other.gameObject);
+        }
+        else if (other.CompareTag("Ghost"))
+        {
+            int i = gm.GhostIndex(other.transform);
+            if (i < 0) return;
+            int s = gm.ghostStates[i];
+            if (s == GameManager.NORMAL) gm.PacDied();
+            else if (s == GameManager.SCARED || s == GameManager.RECOVERING) gm.EatGhost(i);
+        }
     }
 }
