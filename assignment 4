@@ -1,0 +1,15 @@
+PacStudent assignment-4 
+
+Name: Yashu Agarwal Student ID: 14644734 GitHub: https://github.com/yashuagarwal2/PacStudent_Assessment_3-4 
+
+A Pac-Man–style 2D game made in Unity 6 (6000.4.11f1) for 31263/32004 Introduction to Game Development, Assessments 3 and 4.
+
+How to play
+
+Open Assets/Scenes/StartScene and press Play.
+
+W A S D: move
+Space: dash (Level 2 only)
+Levels
+Level 1: recreation of the classic game.
+Level 2: adds a dash ability and Speed Boost / Ghost Freeze pickups.
