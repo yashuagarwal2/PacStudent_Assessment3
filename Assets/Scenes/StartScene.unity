@@ -248,6 +248,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StartSceneManager
   l1Score: {fileID: 637162418}
   l1Time: {fileID: 2041858916}
+  l2Score: {fileID: 689098148}
+  l2Time: {fileID: 1418790118}
+  music: {fileID: 0}
 --- !u!4 &37991071
 Transform:
   m_ObjectHideFlags: 0

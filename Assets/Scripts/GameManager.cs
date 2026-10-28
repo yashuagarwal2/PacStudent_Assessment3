@@ -14,12 +14,15 @@ public class GameManager : MonoBehaviour
     public GameObject blocker;
     public GameObject[] lifeIcons;
     public Button exitButton;
+    public TMP_Text powerUpText;
 
     public PacStudentController pac;
     public Animator[] ghostAnimators;
     public MusicManager music;
     public AudioSource sfx;
     public AudioClip ghostEatClip;
+
+    public string saveKey = "L1";
 
     public const int NORMAL = 0;
     public const int SCARED = 1;
@@ -29,25 +32,26 @@ public class GameManager : MonoBehaviour
     public int score = 0;
     public int lives = 3;
     public bool gameRunning = false;
+    public bool GhostsFrozen = false;
     public int[] ghostStates = new int[4];
 
     float gameTime = 0f;
     float scaredTimer = 0f;
+    float freezeTimer = 0f;
     int pelletsLeft = -1;
     bool gameOver = false;
-    Vector3[] ghostStarts = new Vector3[4];
 
     void Start()
     {
-        for (int i = 0; i < 4; i++)
-        {
-            ghostStarts[i] = ghostAnimators[i].transform.position;
-        }
-
         scoreText.text = score.ToString("D6");
         timerText.text = FormatTime(0f);
         ghostTimerText.gameObject.SetActive(false);
         gameOverText.gameObject.SetActive(false);
+
+        if (powerUpText != null)
+        {
+            powerUpText.text = "";
+        }
 
         StartCoroutine(Countdown());
     }
@@ -89,6 +93,12 @@ public class GameManager : MonoBehaviour
         gameTime = gameTime + Time.deltaTime;
         timerText.text = FormatTime(gameTime);
 
+        UpdateScaredTimer();
+        UpdateFreezeTimer();
+    }
+
+    void UpdateScaredTimer()
+    {
         if (scaredTimer <= 0f)
         {
             return;
@@ -124,6 +134,23 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void UpdateFreezeTimer()
+    {
+        if (freezeTimer <= 0f)
+        {
+            return;
+        }
+
+        freezeTimer = freezeTimer - Time.deltaTime;
+
+        if (freezeTimer <= 0f)
+        {
+            freezeTimer = 0f;
+            GhostsFrozen = false;
+            SetGhostTint(Color.white);
+        }
+    }
+
     public static string FormatTime(float t)
     {
         int minutes = (int)(t / 60f);
@@ -146,6 +173,34 @@ public class GameManager : MonoBehaviour
         if (pelletsLeft == 0)
         {
             StartCoroutine(GameOver());
+        }
+    }
+
+    public void ActivateFreeze(float seconds)
+    {
+        freezeTimer = seconds;
+        GhostsFrozen = true;
+        SetGhostTint(new Color(0.5f, 0.9f, 1f));
+    }
+
+    void SetGhostTint(Color c)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            SpriteRenderer sr = ghostAnimators[i].GetComponent<SpriteRenderer>();
+
+            if (sr != null)
+            {
+                sr.color = c;
+            }
+        }
+    }
+
+    public void ShowPowerUpText(string message)
+    {
+        if (powerUpText != null)
+        {
+            powerUpText.text = message;
         }
     }
 
@@ -284,15 +339,14 @@ public class GameManager : MonoBehaviour
             {
                 ghost.ResetGhost();
             }
-            else
-            {
-                ghostAnimators[i].transform.position = ghostStarts[i];
-            }
 
             SetGhostState(i, NORMAL);
         }
 
         scaredTimer = 0f;
+        freezeTimer = 0f;
+        GhostsFrozen = false;
+        SetGhostTint(Color.white);
         ghostTimerText.gameObject.SetActive(false);
         music.PlayNormal();
         gameRunning = true;
@@ -310,10 +364,14 @@ public class GameManager : MonoBehaviour
 
         blocker.SetActive(true);
         gameOverText.gameObject.SetActive(true);
-                if (exitButton != null) exitButton.interactable = false;
 
-        int bestScore = PlayerPrefs.GetInt("L1Score", 0);
-        float bestTime = PlayerPrefs.GetFloat("L1Time", 0f);
+        if (exitButton != null)
+        {
+            exitButton.interactable = false;
+        }
+
+        int bestScore = PlayerPrefs.GetInt(saveKey + "Score", 0);
+        float bestTime = PlayerPrefs.GetFloat(saveKey + "Time", 0f);
 
         bool newBest = false;
 
@@ -328,8 +386,8 @@ public class GameManager : MonoBehaviour
 
         if (newBest)
         {
-            PlayerPrefs.SetInt("L1Score", score);
-            PlayerPrefs.SetFloat("L1Time", gameTime);
+            PlayerPrefs.SetInt(saveKey + "Score", score);
+            PlayerPrefs.SetFloat(saveKey + "Time", gameTime);
             PlayerPrefs.Save();
         }
 
